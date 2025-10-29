@@ -1,0 +1,47 @@
+Assets Required for credit-card.html
+=====================================
+
+Total unique images: 27
+
+SVG Files (21):
+1. 02e9afdfbbf5a8fccbbea895768615d75fe735d9.svg - Arrow icon
+2. 29a5415ca9c35cc325f0741706a4b2e6f7b4e50f.svg - Accordion icon
+3. 30ef96328bc951d6a8185390ccddd8a4efa44db8.svg - Tag icon
+4. 33abc970d8b5f56fa57303adbdbc3b0b4f545862.svg - Information icon
+5. 34746245cb1c4ab36dbc112b2a28f2b0d43250c2.svg - Binary icon (star/stars)
+6. 3cc98ca22533ac49504cf7b64315ba453837069f.svg - Tab icon
+7. 5bd02390f893d28e0c5e8fac8b7aca7d5ed87e7d.svg - Clock icon
+8. 6668ee8024a404cf44c8ee97dd1ac234e89f6b5c.svg - Plus icon
+9. 6f985f153d183048a94efc0ccb914d4f2112831c.svg - DBS Logo
+10. 73cd75d728128b946ed066a95e1b6b1a98f23f34.svg - Feature icon
+11. 94e93e8554df95c767deab21083505483efba3a7.svg - Tab icon
+12. 96c09e3efe018f378c0d28c7e89164d0db5df77e.svg - Feature icon
+13. 9954aac6cb29a843c83f418efc0839fe0749b74b.svg - Binary icon
+14. 9c48718c1df35dd36a63ff59ee9003960ce407cb.svg - Accordion chevron
+15. bf23867c128c78eed507f37d13a620defdfdb2f5.svg - Disclaimer chevron
+16. e0608643285971d6e5c0423438c770d18c26d08f.svg - Info icon
+17. e07dff6988b677ba7aae09d51eb17f809d15dcb4.svg - Feature icon
+18. f3e90360c7a72eee8bd80c673d94795d50715bdc.svg - Tab icon (multiple uses)
+19. f3ea6b4b5189dc1643e8a11ce0b4781078761170.svg - Accordion icon
+20. fcb9d070704e6f64b01d4f1c8db6e44f07ccaf0e.svg - Chevron icon
+21. fe1dfdd76781dd9cd835467cf2ef2737a6b79b01.svg - Separator icon (breadcrumb)
+
+PNG Files (6):
+1. 1ce5cae0439afb61ee550942de6700afa15d46cd.png - Deal image
+2. 5ee3164f9604630890b1800650335f7773d097e4.png - POSB Everyday Card image
+3. 9fd854c883b2ba7d0aaec0cf6a33afe5423eca7c.png - QR Code
+4. a18562acf2be79c6fca55166a6e153f4fd8b6b80.png - Deal image
+5. f2f07f93c25cb21635c35670814549728720629a.png - Deal image
+6. ffc9d631483b5a22d313f8297026315e5b9f54ef.png - Image 8
+
+Export Instructions:
+===================
+1. Open Figma desktop app with the design file
+2. For each image hash above, search or locate the corresponding asset in Figma
+3. Right-click the asset and select "Export" or use the Export panel
+4. Export SVG files as "SVG" format
+5. Export PNG files as "PNG" format (2x or 3x for retina if needed)
+6. Save each file with the exact hash filename as listed above
+7. Place all exported files in the ./assets/ directory
+8. Commit and push the assets folder to the repository
+
