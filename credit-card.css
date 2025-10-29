@@ -763,6 +763,7 @@ button {
     align-items: start;
     width: 100%;
     position: relative;
+    cursor: pointer;
 }
 
 .anchor-link-content {

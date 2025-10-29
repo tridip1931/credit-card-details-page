@@ -1,4 +1,11 @@
 // ===================================
+// GLOBAL VARIABLES
+// ===================================
+
+// Flag to prevent scroll detection from overriding manual navigation
+let isManualNavigation = false;
+
+// ===================================
 // DOM READY EVENT LISTENER
 // ===================================
 
@@ -185,15 +192,15 @@ function initAnchorLink() {
     const toggleButton = document.getElementById('anchorLinkToggle');
     const anchorOptions = document.querySelectorAll('.anchor-link-option');
     const currentText = document.getElementById('anchorLinkCurrent');
+    const anchorWrapper = document.querySelector('.anchor-link-wrapper');
     
     if (!anchorLink || !toggleButton) {
         console.warn('Anchor link elements not found');
         return;
     }
     
-    // Toggle expand/collapse
-    toggleButton.addEventListener('click', (e) => {
-        e.preventDefault();
+    // Function to toggle expand/collapse
+    const toggleExpanded = () => {
         anchorLink.classList.toggle('expanded');
         
         // Update aria-label
@@ -207,41 +214,94 @@ function initAnchorLink() {
                 wrapper.classList.remove('sliding-out-up', 'sliding-out-down', 'sliding-in-from-bottom', 'sliding-in-from-top');
             });
         }
+    };
+    
+    // Add click listener to entire wrapper
+    if (anchorWrapper) {
+        anchorWrapper.addEventListener('click', (e) => {
+            // Don't toggle if clicking on an anchor link option
+            if (!e.target.closest('.anchor-link-option')) {
+                e.preventDefault();
+                toggleExpanded();
+            }
+        });
+    }
+    
+    // Keep toggle button listener for accessibility (keyboard navigation)
+    toggleButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation(); // Prevent double toggle from wrapper click
+        toggleExpanded();
     });
     
     // Handle anchor link clicks
     anchorOptions.forEach(option => {
         option.addEventListener('click', (e) => {
             e.preventDefault();
+            e.stopPropagation(); // Prevent triggering wrapper click
+            
             const sectionId = option.getAttribute('href').substring(1);
             const targetSection = document.getElementById(sectionId);
             
             if (targetSection) {
-                // Smooth scroll to section
+                // Set flag to prevent scroll detection from changing active state
+                isManualNavigation = true;
+                
+                // Calculate scroll position
                 const targetOffset = targetSection.offsetTop;
                 const stickyCTA = document.getElementById('productStickyCTA');
                 const anchorLinkElement = document.getElementById('anchorLinkMobile');
+
+                // Always calculate for both sticky elements being active at destination
                 let offset = 0;
-                
-                // Account for sticky elements
-                if (stickyCTA && stickyCTA.classList.contains('visible')) {
-                    offset += stickyCTA.offsetHeight;
+
+                // Product Sticky CTA - will be visible at destination
+                if (stickyCTA) {
+                    offset += stickyCTA.offsetHeight || 70; // Fallback height
                 }
-                if (anchorLinkElement && anchorLinkElement.classList.contains('sticky-active')) {
-                    offset += anchorLinkElement.offsetHeight;
+
+                // Anchor link - will be sticky at destination (use collapsed height)
+                if (anchorLinkElement) {
+                    // Use collapsed height, not current offsetHeight (which might be expanded)
+                    // Collapsed: padding 33px + content ~23px = ~56px
+                    const collapsedHeight = 56;
+                    offset += collapsedHeight;
                 }
+
+                // Add small visual buffer for comfortable spacing (reduced from 24)
+                offset += 8;
                 
                 window.scrollTo({
                     top: targetOffset - offset,
                     behavior: 'smooth'
                 });
                 
-                // Collapse anchor link after a delay
+                // Update active state immediately
+                anchorOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+                
+                // Update collapsed state text immediately
+                if (currentText) {
+                    const newText = option.querySelector('.anchor-link-text').textContent;
+                    let wrapper = currentText.querySelector('.anchor-text-wrapper');
+                    if (!wrapper) {
+                        currentText.innerHTML = `<span class="anchor-text-wrapper">${newText}</span>`;
+                    } else {
+                        wrapper.classList.remove('sliding-out-up', 'sliding-out-down', 'sliding-in-from-bottom', 'sliding-in-from-top');
+                        wrapper.textContent = newText;
+                        const allWrappers = currentText.querySelectorAll('.anchor-text-wrapper');
+                        allWrappers.forEach((w, index) => {
+                            if (index > 0) w.remove();
+                        });
+                    }
+                }
+                
+                // Collapse anchor link after delay
                 setTimeout(() => {
                     anchorLink.classList.remove('expanded');
                     toggleButton.setAttribute('aria-label', 'Expand');
-                    
-                    // Clean up any running animations when collapsing
+
+                    // Clean up animations
                     if (currentText) {
                         const wrappers = currentText.querySelectorAll('.anchor-text-wrapper');
                         wrappers.forEach(wrapper => {
@@ -249,29 +309,11 @@ function initAnchorLink() {
                         });
                     }
                 }, 300);
-                
-                // Update active state
-                anchorOptions.forEach(opt => opt.classList.remove('active'));
-                option.classList.add('active');
-                
-                // Update collapsed state text (preserve wrapper structure)
-                if (currentText) {
-                    const newText = option.querySelector('.anchor-link-text').textContent;
-                    // Get or create wrapper
-                    let wrapper = currentText.querySelector('.anchor-text-wrapper');
-                    if (!wrapper) {
-                        currentText.innerHTML = `<span class="anchor-text-wrapper">${newText}</span>`;
-                    } else {
-                        // Remove any animation classes and update text
-                        wrapper.classList.remove('sliding-out-up', 'sliding-out-down', 'sliding-in-from-bottom', 'sliding-in-from-top');
-                        wrapper.textContent = newText;
-                        // Remove any extra wrappers (cleanup)
-                        const allWrappers = currentText.querySelectorAll('.anchor-text-wrapper');
-                        allWrappers.forEach((w, index) => {
-                            if (index > 0) w.remove();
-                        });
-                    }
-                }
+
+                // Clear flag after scroll animation completes (smooth scroll takes ~800ms)
+                setTimeout(() => {
+                    isManualNavigation = false;
+                }, 1000);
             }
         });
     });
@@ -292,9 +334,9 @@ function initScrollAnimation() {
     
     const sections = [
         { id: 'about', element: document.getElementById('about') },
-        { id: 'earn', element: document.getElementById('earn') },
         { id: 'redeem', element: document.getElementById('redeem') },
         { id: 'fees', element: document.getElementById('fees') },
+        { id: 'earn', element: document.getElementById('earn') },
         { id: 'deals', element: document.getElementById('deals') },
         { id: 'manage', element: document.getElementById('manage') },
         { id: 'faq', element: document.getElementById('faq') },
@@ -308,10 +350,22 @@ function initScrollAnimation() {
     const handleScroll = debounce(() => {
         // Don't animate opacity when expanded
         const isExpanded = anchorLink && anchorLink.classList.contains('expanded');
-        
+
         const scrollPos = window.pageYOffset || document.documentElement.scrollTop;
         const viewportHeight = window.innerHeight;
-        const triggerOffset = 250; // Offset for better detection
+
+        // Calculate dynamic trigger offset based on sticky elements (collapsed state)
+        const stickyCTA = document.getElementById('productStickyCTA');
+        const anchorLinkElement = document.getElementById('anchorLinkMobile');
+        let triggerOffset = 0;
+
+        if (stickyCTA) {
+            triggerOffset += stickyCTA.offsetHeight || 70;
+        }
+        if (anchorLinkElement) {
+            triggerOffset += anchorLinkElement.offsetHeight || 60;
+        }
+        triggerOffset += 8; // Visual buffer (same as navigation scroll)
         
         // Determine scroll direction
         const scrollDirection = scrollPos > lastScrollPos ? 'down' : 'up';
@@ -371,10 +425,10 @@ function initScrollAnimation() {
                 option.style.opacity = opacity;
             }
             
-            // Update active state
-            if (section.id === currentSection.id) {
+            // Update active state (skip if manual navigation is in progress)
+            if (section.id === currentSection.id && !isManualNavigation) {
                 option.classList.add('active');
-                
+
                 // Update collapsed state text with sequential animation
                 if (currentText && !isExpanded) {
                     const newText = option.querySelector('.anchor-link-text').textContent;
@@ -428,7 +482,8 @@ function initScrollAnimation() {
                         }
                     }
                 }
-            } else {
+            } else if (!isManualNavigation) {
+                // Only remove active class if not during manual navigation
                 option.classList.remove('active');
             }
         });
