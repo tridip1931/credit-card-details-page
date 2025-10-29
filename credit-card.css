@@ -341,7 +341,6 @@ button {
    =================================== */
 
 .feature-section-mobile {
-    background-color: var(--color-background);
     display: flex;
     flex-direction: column;
     align-items: start;
@@ -349,7 +348,6 @@ button {
 }
 
 .feature-section {
-    background-color: white;
     display: flex;
     flex-direction: column;
     gap: 32px;
@@ -535,7 +533,7 @@ button {
 }
 
 .benefit-icon {
-    background-color: #fff4f4;
+    background-color: #e8e8ed;
     display: flex;
     gap: 5px;
     align-items: center;
