@@ -533,7 +533,7 @@ button {
 }
 
 .benefit-icon {
-    background-color: #e8e8ed;
+    background-color: transparent;
     display: flex;
     gap: 5px;
     align-items: center;
