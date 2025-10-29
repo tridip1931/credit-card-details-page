@@ -528,7 +528,7 @@ button {
 .benefit-list-item {
     display: flex;
     gap: 8px;
-    align-items: center;
+    align-items: start;
     width: 100%;
 }
 
